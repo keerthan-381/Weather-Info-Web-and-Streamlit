@@ -48,7 +48,7 @@ def main():
     # Button to get weather
     if st.button("Get Weather", key="get_weather"):
         # Your WeatherStack access key
-        access_key = 'b4d3a219c2252b62ae5805c7f7475ace'
+        access_key = 'YOUR_API_KEY'
 
         # Fetch the weather data
         weather_data = get_weather(location, access_key)
