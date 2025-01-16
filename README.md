@@ -55,7 +55,6 @@ The Weather Information App is a web application that provides users with the la
 ## Configuration
 - Replace the `access_key` variable with your own WeatherStack API key in both the Streamlit app (`app.py`) and the frontend JavaScript.
 
-```
 
 ## Detailed Description
 
