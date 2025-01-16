@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Information App</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(to right, #00c6ff, #0072ff);
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 3em;
+            margin-top: 20px;
+            color: #fff;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+        }
+
+        p {
+            font-size: 1.2em;
+            color: #f0f0f0;
+        }
+
+        .container {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            width: 90%;
+            max-width: 800px;
+        }
+
+        .input-container {
+            margin: 20px 0;
+        }
+
+        input {
+            padding: 10px;
+            width: 250px;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            outline: none;
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        button {
+            background: linear-gradient(90deg, #1e90ff, #00bfff);
+            color: #fff;
+            font-weight: bold;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background: linear-gradient(90deg, #00bfff, #1e90ff);
+        }
+
+        .weather-info {
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 25px;
+            border-radius: 15px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .weather-info h2 {
+            font-size: 2.2em;
+            color: #ffde59;
+            margin-bottom: 20px;
+        }
+
+        .columns {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .column {
+            width: 48%;
+        }
+
+        .column p {
+            font-size: 1.1em;
+            color: #f1f1f1;
+        }
+
+        .column strong {
+            color: #ffde59;
+        }
+
+        .error {
+            color: red;
+            margin-top: 20px;
+            font-size: 1.2em;
+        }
+
+        footer {
+            margin-top: 40px;
+            font-size: 1em;
+            color: #fff;
+            opacity: 0.7;
+        }
+
+        footer a {
+            color: #ffde59;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🌤️ Weather Information App</h1>
+    <p>Get the latest weather information, including temperature, humidity, wind speed, and more!</p>
+
+    <div class="input-container">
+        <input type="text" id="location" placeholder="Enter the city name" value="New York">
+    </div>
+
+    <button onclick="getWeather()">Get Weather</button>
+
+    <div id="error" class="error"></div>
+
+    <div id="weatherInfo" class="weather-info">
+        <h2>Weather in <span id="locationName"></span>, <span id="locationCountry"></span></h2>
+        <p>Observation Time: <span id="observationTime"></span></p>
+        <div class="columns">
+            <div class="column">
+                <p><strong>Temperature:</strong> <span id="temperature"></span>°C</p>
+                <p><strong>Weather Description:</strong> <span id="weatherDescription"></span></p>
+            </div>
+            <div class="column">
+                <p><strong>Wind Speed:</strong> <span id="windSpeed"></span> km/h</p>
+                <p><strong>Wind Direction:</strong> <span id="windDirection"></span></p>
+                <p><strong>Pressure:</strong> <span id="pressure"></span> hPa</p>
+            </div>
+        </div>
+        <div class="columns">
+            <div class="column">
+                <p><strong>Precipitation:</strong> <span id="precipitation"></span> mm</p>
+                <p><strong>Humidity:</strong> <span id="humidity"></span>%</p>
+            </div>
+            <div class="column">
+                <p><strong>Wind Degree:</strong> <span id="windDegree"></span>°</p>
+                <p><strong>Visibility:</strong> <span id="visibility"></span> km</p>
+            </div>
+        </div>
+    </div>
+
+  
+</div>
+
+<script>
+    async function getWeather() {
+        const location = document.getElementById('location').value;
+        const accessKey = 'b4d3a219c2252b62ae5805c7f7475ace'; // Your WeatherStack access key
+
+        const url = `http://api.weatherstack.com/current?access_key=${accessKey}&query=${location}`;
+
+        try {
+            const response = await fetch(url);
+            const data = await response.json();
+
+            if (data.error) {
+                document.getElementById('error').innerText = "Error: " + data.error.info;
+                document.getElementById('weatherInfo').style.display = 'none';
+            } else {
+                document.getElementById('error').innerText = '';
+                document.getElementById('weatherInfo').style.display = 'block';
+
+                const locationData = data.location;
+                const currentWeather = data.current;
+
+                document.getElementById('locationName').innerText = locationData.name;
+                document.getElementById('locationCountry').innerText = locationData.country;
+                document.getElementById('observationTime').innerText = currentWeather.observation_time;
+                document.getElementById('temperature').innerText = currentWeather.temperature;
+                document.getElementById('weatherDescription').innerText = currentWeather.weather_descriptions.join(', ');
+                document.getElementById('windSpeed').innerText = currentWeather.wind_speed;
+                document.getElementById('windDirection').innerText = currentWeather.wind_dir;
+                document.getElementById('pressure').innerText = currentWeather.pressure;
+                document.getElementById('precipitation').innerText = currentWeather.precip;
+                document.getElementById('humidity').innerText = currentWeather.humidity;
+                document.getElementById('windDegree').innerText = currentWeather.wind_degree;
+                document.getElementById('visibility').innerText = currentWeather.visibility;
+            }
+        } catch (error) {
+            document.getElementById('error').innerText = "Failed to fetch weather data.";
+        }
+    }
+</script>
+
+</body>
+</html>
